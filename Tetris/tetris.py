@@ -2,11 +2,11 @@ import pyxel
 import block
 import constants
 
-class App:
+class Tetris:
 
 	def __init__(self):
 		pyxel.init(120, 220, fps = 60)
-		pyxel.image(0).load(0, 0, 'block.png')
+		pyxel.image(0).load(0, 0, 'blocks_8x56.png')
 		self.reset()
 		pyxel.run(self.update, self.draw)
 		
@@ -14,8 +14,10 @@ class App:
 		self.frame_count_on_last_move = pyxel.frame_count
 		self.score = 0
 		self.grid = []
+		self.grid_tile_colors = []
 		for row in range(22):
 			self.grid.append([0] * 10)
+			self.grid_tile_colors.append([-1] * 10)
 		self.block = block.Block() #spawn some random block
 
 	def update(self):
@@ -28,17 +30,15 @@ class App:
 
 		move_direction = None
 		rotate_direction = None
-		if pyxel.btnp(pyxel.constants.KEY_LEFT, 20, 10):
+		if pyxel.btnp(pyxel.constants.KEY_LEFT, 12, 2):
 			move_direction = constants.direction_L
-		elif pyxel.btnp(pyxel.constants.KEY_RIGHT ,20, 10):
+		elif pyxel.btnp(pyxel.constants.KEY_RIGHT ,12, 2):
 			move_direction = constants.direction_R
-		elif pyxel.btnp(pyxel.constants.KEY_DOWN ,20, 1):
+		elif pyxel.btnp(pyxel.constants.KEY_DOWN ,12, 2):
 			move_direction = constants.direction_D
-		# elif pyxel.btn(pyxel.constants.KEY_UP):
-		# 	move_direction = constants.direction_D
-		elif pyxel.btnp(pyxel.constants.KEY_Z ,20, 20):
+		elif pyxel.btnp(pyxel.constants.KEY_Z ,12, 20):
 			rotate_direction = constants.direction_L
-		elif pyxel.btnp(pyxel.constants.KEY_X ,20, 20):
+		elif pyxel.btnp(pyxel.constants.KEY_X ,12, 20):
 			rotate_direction = constants.direction_R
 
 		if  self.block.move_block(move_direction, self.grid):
@@ -70,20 +70,23 @@ class App:
 		pyxel.cls(0)
 		current_block_tiles = self.block.get_block_tiles(self.block.position, self.block.orientation)
 
-		pyxel.rectb(20, 20, 101, 181, 4)
+		#draw block
+		pyxel.rectb(20, 20, 101, 181, 3)
 		for tile in current_block_tiles:
 			if 2 <= tile[0] <= 21:
-				pyxel.blt(tile[1] * 8 + 21, 173 - (21 - tile[0]) * 8, 0, 0, 0, 8, 8)
+				pyxel.blt(tile[1] * 8 + 21, 21 + (tile[0] - 2) * 8, 0, self.block.shape * 8, 0, 8, 8, 0)
 		
+		#frozen grid
 		for row in range(2, 22):
 			for column in range(10):
 				if self.grid[row][column] == 1:
-					pyxel.blt(21 + column * 8, 21 + (row - 2) * 8, 0, 0, 0, 8, 8)					
+					pyxel.blt(21 + column * 8, 21 + (row - 2) * 8, 0, self.grid_tile_colors[row][column] * 8, 0, 8, 8, 0)					
 
 	def freeze_block(self):
 		"""freezes the block to the grid"""
 		for tile in self.block.get_block_tiles(self.block.position, self.block.orientation):
 			self.grid[tile[0]][tile[1]] = 1
+			self.grid_tile_colors[tile[0]][tile[1]] = self.block.shape
 
 	def clear_rows(self):
 		rows_to_clear = []
@@ -97,6 +100,7 @@ class App:
 		for row in rows_to_clear:
 			for r in range(row, 1, -1):
 				self.grid[r] = [x for x in self.grid[r - 1]]
+				self.grid_tile_colors[r] = [x for x in self.grid_tile_colors[r - 1]]
 
 	def is_game_over(self):
 		if self.block.position[0] == 0:
@@ -104,4 +108,4 @@ class App:
 		return False
 
 if __name__ == '__main__':
-	App()
+	Tetris()
