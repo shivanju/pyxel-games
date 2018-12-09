@@ -11,7 +11,8 @@ class Tetris:
 		pyxel.run(self.update, self.draw)
 		
 	def reset(self):
-		self.frame_count_on_last_move = pyxel.frame_count
+		self.state = 'resumed'
+		self.frame_count_from_last_move = 0
 		self.score = 0
 		self.grid = []
 		self.grid_tile_colors = []
@@ -28,6 +29,15 @@ class Tetris:
 			self.reset()
 			return
 
+		if pyxel.btnp(pyxel.constants.KEY_P):
+			if self.state == 'resumed':
+				self.state = 'paused'
+			else:
+				self.state = 'resumed'
+		
+		if self.state == 'paused':
+			return
+
 		move_direction = None
 		rotate_direction = None
 		if pyxel.btnp(pyxel.constants.KEY_LEFT, 12, 2):
@@ -42,14 +52,15 @@ class Tetris:
 			rotate_direction = constants.direction_R
 
 		if  self.block.move_block(move_direction, self.grid):
-			#if direction is down and move down was successful; reset the frames count on last move
+			#if direction is down and move down was successful; reset the frames count from last move
 			if move_direction == constants.direction_D:
-				self.frame_count_on_last_move = pyxel.frame_count
+				self.frame_count_from_last_move = 0
 
 		self.block.rotate_block(rotate_direction, self.grid)
 
 		#check if X numbers of frames have elapsed. Then move down if possible, else freeze the block (spawn new block) and reset the frame elapsed
-		if (pyxel.frame_count - self.frame_count_on_last_move == 45):
+		if (self.frame_count_from_last_move == 45):
+			self.frame_count_from_last_move = 0
 			if not(self.block.move_block(constants.direction_D, self.grid)):
 				if self.is_game_over():
 					self.reset()
@@ -57,14 +68,16 @@ class Tetris:
 				self.freeze_block()
 				self.clear_rows()
 				self.block = block.Block()
-			self.frame_count_on_last_move = pyxel.frame_count
+
+		self.frame_count_from_last_move += 1
 
 	def draw(self):
 		self.draw_grid()
 		pyxel.text(40, 190, "SCORE: ", 10)
 		pyxel.text(70, 190, str(self.score), 12)
-		pyxel.text(22, 200, "Q: quit", 8)
-		pyxel.text(62, 200, "R: restart", 11)
+		pyxel.text(6, 200, "Q:quit", 8)
+		pyxel.text(40, 200, "P:pause", 9)
+		pyxel.text(76, 200, "R:restart", 11)
 
 	def draw_grid(self):
 		pyxel.cls(0)
