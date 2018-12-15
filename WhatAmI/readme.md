@@ -9,4 +9,4 @@ A work in progress of a puzzle-platformer in [Pyxel](https://github.com/kitao/py
 
 Improvements are welcome.
 
-[game-screenshot]: https://github.com/shivanju/pyxel-games/blob/master/WhatAmI/game_screenshot.png
+[game-screenshot]: https://github.com/shivanju/pyxel-games/blob/master/WhatAmI/screenshot_2.png
