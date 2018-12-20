@@ -23,17 +23,17 @@ class App:
 
         if pyxel.btn(pyxel.constants.KEY_Z) and self.is_player_grounded():
             self.player.v_velo = -3.2
-            self.player.state = 'move'
+            self.player.state = 'jump'
         if pyxel.btn(pyxel.constants.KEY_LEFT):
             self.player.h_velo = -1
             self.player.state = 'move'
             self.player.facing = 'left'
-            self.player_move_count = (self.player_move_count + 1) % 8
+            self.player_move_count = (self.player_move_count + 1) % 6
         if pyxel.btn(pyxel.constants.KEY_RIGHT):
             self.player.h_velo = 1
             self.player.state = 'move'
             self.player.facing = 'right'
-            self.player_move_count = (self.player_move_count + 1) % 8
+            self.player_move_count = (self.player_move_count + 1) % 6
 
 
         self.update_player()
@@ -43,8 +43,8 @@ class App:
             self.player_animation = 0
             return
         
-        if self.player_move_count == 0:
-            self.player_animation = (self.player_animation + 1) % 2
+        if self.player_move_count == 0 and self.player.state == 'move':
+            self.player_animation = (self.player_animation + 1) % 4
 
         self.player.x_pos = self.player.x_pos + self.player.h_velo
         self.resolve_h_collision()
@@ -63,7 +63,7 @@ class App:
             self.player.state = 'rest'
 
     def draw(self):
-        pyxel.cls(1)
+        pyxel.cls(13)
         self.draw_level()
         self.draw_player()
 
