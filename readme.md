@@ -1,3 +1,5 @@
+## After [Pyxel](https://github.com/kitao/pyxel) started using SDL, this code in this repo needs to be refactored accordingly. We'll update in some time.
+
 Collection of some games made in [Pyxel](https://github.com/kitao/pyxel)
 
 Improvements are welcome.
