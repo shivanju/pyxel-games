@@ -1,6 +1,7 @@
 import pyxel
 import block
 import constants
+import random
 
 class Tetris:
 
@@ -16,20 +17,21 @@ class Tetris:
 		self.score = 0
 		self.grid = []
 		self.grid_tile_colors = []
+		self.blocks = [0, 1, 2, 3, 4, 5, 6]
 		for row in range(22):
 			self.grid.append([0] * 10)
 			self.grid_tile_colors.append([-1] * 10)
-		self.block = block.Block() #spawn some random block
+		self.block = block.Block(shape = self.blocks.pop(random.randint(0, len(self.blocks) - 1))) #spawn some random block
 
 	def update(self):
-		if pyxel.btnp(pyxel.constants.KEY_Q):
+		if pyxel.btnp(pyxel.KEY_Q):
 			pyxel.quit()
 
-		if pyxel.btnp(pyxel.constants.KEY_R):
+		if pyxel.btnp(pyxel.KEY_R):
 			self.reset()
 			return
 
-		if pyxel.btnp(pyxel.constants.KEY_P):
+		if pyxel.btnp(pyxel.KEY_P):
 			if self.state == 'resumed':
 				self.state = 'paused'
 			else:
@@ -40,15 +42,15 @@ class Tetris:
 
 		move_direction = None
 		rotate_direction = None
-		if pyxel.btnp(pyxel.constants.KEY_LEFT, 12, 2):
+		if pyxel.btnp(pyxel.KEY_LEFT, 12, 2):
 			move_direction = constants.direction_L
-		elif pyxel.btnp(pyxel.constants.KEY_RIGHT ,12, 2):
+		elif pyxel.btnp(pyxel.KEY_RIGHT ,12, 2):
 			move_direction = constants.direction_R
-		elif pyxel.btnp(pyxel.constants.KEY_DOWN ,12, 2):
+		elif pyxel.btnp(pyxel.KEY_DOWN ,12, 2):
 			move_direction = constants.direction_D
-		elif pyxel.btnp(pyxel.constants.KEY_Z ,12, 20):
+		elif pyxel.btnp(pyxel.KEY_Z ,12, 20):
 			rotate_direction = constants.direction_L
-		elif pyxel.btnp(pyxel.constants.KEY_X ,12, 20):
+		elif pyxel.btnp(pyxel.KEY_X ,12, 20):
 			rotate_direction = constants.direction_R
 
 		if  self.block.move_block(move_direction, self.grid):
@@ -67,7 +69,9 @@ class Tetris:
 					return
 				self.freeze_block()
 				self.clear_rows()
-				self.block = block.Block()
+				if (len(self.blocks) == 0):
+					self.blocks = [0, 1, 2, 3, 4, 5, 6]
+				self.block = block.Block(shape = self.blocks.pop(random.randint(0, len(self.blocks) - 1)))
 
 		self.frame_count_from_last_move += 1
 
@@ -84,7 +88,7 @@ class Tetris:
 		current_block_tiles = self.block.get_block_tiles(self.block.position, self.block.orientation)
 
 		#draw block
-		pyxel.rectb(20, 20, 101, 181, 3)
+		pyxel.rectb(20, 20, 82, 162, 3)
 		for tile in current_block_tiles:
 			if 2 <= tile[0] <= 21:
 				pyxel.blt(tile[1] * 8 + 21, 21 + (tile[0] - 2) * 8, 0, self.block.shape * 8, 0, 8, 8, 0)

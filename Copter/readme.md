@@ -1,4 +1,4 @@
-A clasic copter game made in [Pyxel](https://github.com/kitao/pyxel)
+A clasic copter clone made in [Pyxel](https://github.com/kitao/pyxel)
 
 ![][copter-image]
 
